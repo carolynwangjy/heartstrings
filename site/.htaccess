@@ -1,4 +1,4 @@
-# Prevent stale HTML pages after redeploys — always revalidate with the server.
+# Prevent stale HTML pages after redeploys, always revalidate with the server.
 <IfModule mod_headers.c>
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
