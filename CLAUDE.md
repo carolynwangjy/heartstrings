@@ -27,27 +27,3 @@ workflow and one-time setup.
 
 Because a push to `main` goes straight to the live site, treat `main` as
 production: check pages render before pushing.
-
-## Git: no Claude attribution, ever
-
-Commits and pull requests from this repo must never indicate that they were
-written or co-written by Claude. Never add:
-
-- a `Co-Authored-By` trailer naming Claude
-- a "Generated with Claude Code" line, or the robot footer in a PR body
-- `noreply@anthropic.com` as an author or co-author
-
-Write commit messages as the human author, with no attribution trailer of any
-kind.
-
-This is also enforced mechanically, in two independent places, so it holds even
-if this file is not read:
-
-1. `attribution: {commit: "", pr: ""}` in `~/.claude/settings.json` — stops
-   Claude Code from appending the trailers on its own.
-2. `~/.claude/hooks/block-claude-attribution.sh`, wired as a `PreToolUse` hook
-   on `Bash` — denies any command that both invokes `git commit` / `gh pr
-   create` and carries an attribution marker.
-
-Both live in user-global settings, so they apply to every repo on this machine,
-not just this one.
