@@ -1,0 +1,29 @@
+#!/bin/sh
+# Push-to-deploy hook for the Heartstrings site.
+#
+# Install at ~/site.git/hooks/post-receive on ssh.ocf.berkeley.edu.
+# Pushing main to that bare repo checks the commit out into ~/public_html,
+# which is the directory the OCF web server serves. See README.md.
+
+set -e
+
+GIT_DIR_ABS="$HOME/site.git"
+WORK_TREE="$HOME/public_html"
+BRANCH="main"
+
+# The web server has to be able to read whatever we write.
+umask 022
+
+while read -r oldrev newrev ref; do
+  if [ "$ref" != "refs/heads/$BRANCH" ]; then
+    echo "==> ignoring $ref (only $BRANCH deploys)"
+    continue
+  fi
+
+  echo "==> deploying $(echo "$newrev" | cut -c1-7) to $WORK_TREE"
+  git --git-dir="$GIT_DIR_ABS" --work-tree="$WORK_TREE" checkout -f "$BRANCH"
+  # Drop files that are no longer tracked, so deletes and renames actually
+  # take effect instead of lingering on the server forever.
+  git --git-dir="$GIT_DIR_ABS" --work-tree="$WORK_TREE" clean -fd
+  echo "==> done"
+done
