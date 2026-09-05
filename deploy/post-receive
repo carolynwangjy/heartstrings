@@ -2,13 +2,17 @@
 # Push-to-deploy hook for the Heartstrings site.
 #
 # Install at ~/site.git/hooks/post-receive on ssh.ocf.berkeley.edu.
-# Pushing main to that bare repo checks the commit out into ~/public_html,
-# which is the directory the OCF web server serves. See README.md.
+# Pushing main to that bare repo publishes the contents of the repo's
+# site/ directory into ~/public_html, which is what the OCF web server
+# serves. Everything outside site/ (README, this hook, .gitignore) stays
+# in git and is never published. See README.md.
 
 set -e
 
 GIT_DIR_ABS="$HOME/site.git"
-WORK_TREE="$HOME/public_html"
+STAGING="$HOME/.deploy-staging"   # full checkout, kept between deploys
+PUBLISH_DIR="$HOME/public_html"   # what the world sees
+SUBDIR="site"
 BRANCH="main"
 
 # The web server has to be able to read whatever we write.
@@ -20,10 +24,17 @@ while read -r oldrev newrev ref; do
     continue
   fi
 
-  echo "==> deploying $(echo "$newrev" | cut -c1-7) to $WORK_TREE"
-  git --git-dir="$GIT_DIR_ABS" --work-tree="$WORK_TREE" checkout -f "$BRANCH"
-  # Drop files that are no longer tracked, so deletes and renames actually
-  # take effect instead of lingering on the server forever.
-  git --git-dir="$GIT_DIR_ABS" --work-tree="$WORK_TREE" clean -fd
+  echo "==> deploying $(echo "$newrev" | cut -c1-7)"
+
+  # Check the commit out somewhere private. Reusing the same directory
+  # keeps this incremental instead of rewriting every image each deploy.
+  mkdir -p "$STAGING"
+  git --git-dir="$GIT_DIR_ABS" --work-tree="$STAGING" checkout -f "$BRANCH"
+  git --git-dir="$GIT_DIR_ABS" --work-tree="$STAGING" clean -fd
+
+  # --delete makes removals and renames actually take effect, instead of
+  # the old file lingering on the server forever.
+  rsync -a --delete "$STAGING/$SUBDIR/" "$PUBLISH_DIR/"
+
   echo "==> done"
 done

@@ -5,6 +5,12 @@ uc berkeley's music service and wellness club :)
 The live site is served by the [OCF](https://www.ocf.berkeley.edu/) out of the
 `heartstrings` account's `~/public_html`.
 
+## Layout
+
+Everything the public sees lives in `site/` — that directory's contents become
+the web root. Everything else (this README, `deploy/`) stays in git and is
+never published.
+
 ## Deploying
 
 `git push` **is** the deploy. `origin` has two push URLs — GitHub (history) and
