@@ -42,13 +42,13 @@ GitHub URL has to be re-stated explicitly.
 
 ## Server setup (done once, for the whole club)
 
+From a clone, with SSH access to the shared `heartstrings` OCF account:
+
 ```bash
-ssh heartstrings@ssh.ocf.berkeley.edu
-git init --bare ~/site.git
-# paste the contents of deploy/post-receive into:
-nano ~/site.git/hooks/post-receive
-chmod +x ~/site.git/hooks/post-receive
+ssh heartstrings@ssh.ocf.berkeley.edu 'sh -s' < deploy/setup-server.sh
 ```
 
-[deploy/post-receive](deploy/post-receive) is the source of truth for that hook;
-edit it here and re-copy it to the server if it needs to change.
+That creates the bare repo and installs the deploy hook. It is safe to re-run —
+re-running reinstalls the hook, which is how you ship a change to
+[deploy/setup-server.sh](deploy/setup-server.sh) itself. It also snapshots the
+current live site to `~/public_html.bak` the first time.
