@@ -55,7 +55,7 @@ Then load the site and check it looks right.
 
 Once per person, per computer. You need SSH access to the shared `heartstrings`
 OCF account — ask a club officer, or reset the password at
-[ocf.io/password](https://ocf.io/password) if you're a signatory.
+[ocf.io/password](https://ocf.io/password) if you're a signatory. (please don't do the latter in general unless you have agreed upon this with the club presidents.)
 
 ```bash
 git clone git@github.com:carolynwangjy/heartstrings.git
