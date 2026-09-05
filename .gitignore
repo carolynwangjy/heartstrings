@@ -3,3 +3,6 @@ node_modules/
 .env
 .env.local
 *.log
+
+# Local-only Claude Code settings (machine-specific permissions)
+.claude/settings.local.json
